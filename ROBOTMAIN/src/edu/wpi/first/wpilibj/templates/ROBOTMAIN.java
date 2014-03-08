@@ -10,6 +10,8 @@ package edu.wpi.first.wpilibj.templates;
 import NerdHerd.NerdyPIDRobot;
 import NerdHerd.Source.NerdyBot;
 import NerdHerd.VisionFly;
+import NerdHerd.nerdyCamera;
+import edu.wpi.first.wpilibj.camera.AxisCamera;
 
 
 /**
@@ -27,13 +29,15 @@ public class RobotTemplate extends IterativeRobot
      */
     
     NerdyPIDRobot Robot;
-    VisionFly visionFly;
+    nerdyCamera camera;
   
     
     public void robotInit() {
         Robot = new NerdyPIDRobot();
-        Robot.setHeadingTolerance(3);
-        visionFly = new VisionFly();
+        Robot.setHeadingTolerance(3);//This is 3 degrees because it drifts 3 degrees / 2.5 minutes
+        camera = new nerdyCamera(AxisCamera.ResolutionT.k320x240);
+        camera.setPriority(ROBOT_TASK_PRIORITY-1);
+        camera.start();
     }
 
     /**
@@ -42,7 +46,7 @@ public class RobotTemplate extends IterativeRobot
     public void autonomousPeriodic() {
 
         Robot.calcDistanceTraveled();
-        visionFly.cameraProcess();
+
         /*
         Robot.move(Robot.getPIDOutputLinear(3));
         Robot.setHeadingTolerance(3);
