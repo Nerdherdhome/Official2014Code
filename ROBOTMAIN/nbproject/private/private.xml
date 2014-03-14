@@ -3,10 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/student/Documents/GitHub/Official2014Code/ROBOTMAIN/src/NerdHerd/ADXL345_I2C.java</file>
             <file>file:/C:/Users/student/Documents/GitHub/Official2014Code/ROBOTMAIN/src/edu/wpi/first/wpilibj/templates/ROBOTMAIN.java</file>
             <file>file:/C:/Users/student/Documents/GitHub/Official2014Code/ROBOTMAIN/src/NerdHerd/Source/NerdyBot.java</file>
             <file>file:/C:/Users/student/Documents/GitHub/Official2014Code/ROBOTMAIN/src/NerdHerd/Source/NerdyBotThreaded.java</file>
             <file>file:/C:/Users/student/Documents/GitHub/Official2014Code/ROBOTMAIN/src/NerdHerd/nerdyCamera.java</file>
+            <file>file:/C:/Users/student/Documents/GitHub/Official2014Code/ROBOTMAIN/src/NerdHerd/TrapezoidalIntegrator.java</file>
             <file>file:/C:/Users/student/Documents/GitHub/Official2014Code/ROBOTMAIN/src/NerdHerd/NerdyPIDRobot.java</file>
         </group>
     </open-files>

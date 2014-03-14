@@ -63,6 +63,9 @@ public class nerdyCamera extends Thread{
     double distance = 0;
     double angle = 0;
     public boolean cameraActive = true;
+    public int desiredAreaPercent = 75;
+    public int maxDistance = 13;
+    public int minDistance = 8;
      
     public nerdyCamera(AxisCamera.ResolutionT resolution) {
         camera.writeResolution(resolution);
@@ -155,7 +158,7 @@ public class nerdyCamera extends Thread{
                 height = (int)NIVision.MeasureParticle(imagePointer, highestScoreParticleNum, false, MeasurementType.IMAQ_MT_BOUNDING_RECT_HEIGHT);
                 width = (int)NIVision.MeasureParticle(imagePointer, highestScoreParticleNum, false, MeasurementType.IMAQ_MT_BOUNDING_RECT_WIDTH);
                 areaPercent = (int)NIVision.MeasureParticle(imagePointer, highestScoreParticleNum, false, MeasurementType.IMAQ_MT_AREA);
-                areaPercent /= width*height;
+                areaPercent /= (width*height)/100;
                 distance = 2*imageWidth/(2*width*Math.tan(0.4101523));
                 angle = (47 / imageWidth)*(int)NIVision.MeasureParticle(imagePointer, highestScoreParticleNum, false, MeasurementType.IMAQ_MT_CENTER_OF_MASS_X);
                 //TODO Consider moving these to a lower priority thread
@@ -229,5 +232,23 @@ public class nerdyCamera extends Thread{
         double sumCompareScore = (compareScore.aspectRatioVertical + compareScore.aspectRatioHorizontal + compareScore.rectangularity);
         return sumScore >= sumCompareScore;
         
+    }
+    
+    public boolean isHot(){
+        
+        SmartDashboard.putBoolean("isHot" , (areaPercent < desiredAreaPercent));
+        return (areaPercent < desiredAreaPercent);
+        
+    }
+    
+    public boolean isWithinRange(){
+        
+        SmartDashboard.putBoolean("isWithinRange" , (distance < maxDistance && distance > minDistance));
+        return (distance < maxDistance && distance > minDistance);
+    }
+    
+    public boolean isReadyToShoot(){
+        
+        return (isHot() && isWithinRange());
     }
 }

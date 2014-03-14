@@ -12,6 +12,7 @@ import com.sun.squawk.util.MathUtils;
 import edu.wpi.first.wpilibj.CANJaguar;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -58,10 +59,11 @@ public class NerdyPIDRobot{
         try{
             LtDriveMain = new CANJaguar(3);
             LtDriveSub1 = new CANJaguar(5);
-            LtDriveSub2 = new CANJaguar(7);
+            //LtDriveSub2 = new CANJaguar(7);
             RtDriveMain = new CANJaguar(2);
             RtDriveSub1 = new CANJaguar(4);
-            RtDriveSub2 = new CANJaguar(6);
+            //RtDriveSub2 = new CANJaguar(6);
+        
         }catch(Exception e){
             System.out.println(e);
         }
@@ -72,15 +74,7 @@ public class NerdyPIDRobot{
         speedIntegrator = new TrapezoidalIntegrator(NerdyBot.k_PeriodTime, 4.5);
         accel = new ADXL345_I2C(1, ADXL345_I2C.DataFormat_Range.k4G);
         gyro = new Gyro(2);
-        double xAxis = accel.getAcceleration(ADXL345_I2C.Axes.kX);
-        double yAxis = accel.getAcceleration(ADXL345_I2C.Axes.kY);
-       
-        double xAxisSum = 0;
-        double yAxisSum = 0;
-
         init();
-        xAxisOffset = xAxisSum;
-        yAxisOffset = yAxisSum;
         
         
 
@@ -100,7 +94,8 @@ public class NerdyPIDRobot{
         yAxisSum /= calibrationStepsMax;
         xAxisOffset = xAxisSum;
         yAxisOffset = yAxisSum;
-        
+        System.out.println(xAxisSum);
+        System.out.println(yAxisSum);
     }
     
     public void setHeadingTolerance(double degree){
@@ -192,19 +187,19 @@ public class NerdyPIDRobot{
     Calculates the distance traveled
     */
         
-
+        
         double xAxis = accel.getAcceleration(ADXL345_I2C.Axes.kX) - xAxisOffset;
-        double yAxis = accel.getAcceleration(ADXL345_I2C.Axes.kY) - yAxisOffset;
+        double yAxis = (accel.getAcceleration(ADXL345_I2C.Axes.kY) - yAxisOffset);
         double zAxis = accel.getAcceleration(ADXL345_I2C.Axes.kZ);
-        double acceleration = yAxis;
+        double acceleration = (yAxis);
         speedTraveling = speedIntegrator.updateAccumulation(acceleration);
-        double distanceTraveled = DistanceIntegrator.updateAccumulation(speedTraveling);
-        System.out.println("xAxis:\t" + xAxis);
-        System.out.print("\tyAxis:\t" + yAxis);
-        System.out.print("\tzAxis:\t" + zAxis);
-        System.out.print("\tacceleration\t" + acceleration);
-        System.out.print("\tspeedTraveling\t" + speedTraveling);
-        System.out.print("\tdistanceTraveled\t" + distanceTraveled);
+        distanceTraveled = DistanceIntegrator.updateAccumulation(speedTraveling);
+        SmartDashboard.putDouble("xAxis" , xAxis);
+        SmartDashboard.putDouble("yAxis" , yAxis);
+        SmartDashboard.putDouble("zAxis" , zAxis);
+        SmartDashboard.putDouble("acceleration" , acceleration);
+        SmartDashboard.putDouble("speedTraveling" , speedTraveling);
+        SmartDashboard.putDouble("distanceTraveled" , distanceTraveled*32);
         
         return distanceTraveled;
     }

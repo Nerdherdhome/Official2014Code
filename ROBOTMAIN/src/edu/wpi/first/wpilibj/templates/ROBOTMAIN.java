@@ -9,9 +9,9 @@ package edu.wpi.first.wpilibj.templates;
 
 import NerdHerd.NerdyPIDRobot;
 import NerdHerd.Source.NerdyBot;
-import NerdHerd.VisionFly;
 import NerdHerd.nerdyCamera;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
@@ -35,9 +35,11 @@ public class RobotTemplate extends IterativeRobot
     public void robotInit() {
         Robot = new NerdyPIDRobot();
         Robot.setHeadingTolerance(3);//This is 3 degrees because it drifts 3 degrees / 2.5 minutes
+        /*
         camera = new nerdyCamera(AxisCamera.ResolutionT.k320x240);
         camera.setPriority(ROBOT_TASK_PRIORITY-1);
         camera.start();
+        */
     }
 
     /**
@@ -46,7 +48,13 @@ public class RobotTemplate extends IterativeRobot
     public void autonomousPeriodic() {
 
         Robot.calcDistanceTraveled();
-
+        updateStatus();
+        
+        boolean resetMode = Robot.JoystickMain.getRawButton(6);
+        if(resetMode){
+            reset();
+        }
+        
         /*
         Robot.move(Robot.getPIDOutputLinear(3));
         Robot.setHeadingTolerance(3);
@@ -94,10 +102,10 @@ public class RobotTemplate extends IterativeRobot
   
     
     public void updateStatus(){
-        System.out.println("Time Period\t" + m_mainPeriodicTimer.getLastActualPeriod());
+        SmartDashboard.putDouble("Time Period\t" , m_mainPeriodicTimer.getLastActualPeriod());
         Robot.updateGyroValues();
-        System.out.println("Heading\t" + Robot.getHeading());
-        System.out.print("\tGyro Rate\t" + Robot.getRate());
+        SmartDashboard.putDouble("Heading" , Robot.getHeading());
+        SmartDashboard.putDouble("Gyro Rate" , Robot.getRate());
     }
     
     public void reset(){

@@ -1,17 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) FIRST 2008. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -34,8 +20,8 @@ package NerdHerd;
     
 public class TrapezoidalIntegrator {
    
-    private double m_previousValue, m_sampleTime, m_accumulation, m_accumulationLimit = 1;
-    private long m_lastValue = 0;
+    private double m_previousValue = 0, m_sampleTime, m_accumulation = 0, m_accumulationLimit = 1;
+    private double m_lastValue = 0;
             
      
     //Constructor
@@ -88,6 +74,7 @@ public class TrapezoidalIntegrator {
         else if(m_accumulation < -m_accumulationLimit){
             m_accumulation = -m_accumulationLimit;
         }
+        m_lastValue = currentValue;
       return m_accumulation;
         
     }
