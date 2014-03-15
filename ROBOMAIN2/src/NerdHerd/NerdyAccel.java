@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.communication.UsageReporting;
  *
  * @author dtjones
  */
-public class ADXL345_I2C extends SensorBase {
+public class NerdyAccel extends SensorBase {
 
     private static final byte kAddress = 0x3A;
     private static final byte kPowerCtlRegister = 0x2D;
@@ -77,7 +77,7 @@ public class ADXL345_I2C extends SensorBase {
      * @param module The slot of the digital module that the sensor is plugged into.
      * @param range The range (+ or -) that the accelerometer will measure.
      */
-    public ADXL345_I2C(int moduleNumber, DataFormat_Range range) {
+    public NerdyAccel(int moduleNumber, DataFormat_Range range) {
         DigitalModule module = DigitalModule.getInstance(moduleNumber);
         m_i2c = module.getI2C(kAddress);
 

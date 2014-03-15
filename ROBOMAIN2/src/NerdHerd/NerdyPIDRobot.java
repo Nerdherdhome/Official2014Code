@@ -10,7 +10,6 @@ package NerdHerd;
 import NerdHerd.Source.NerdyBot;
 import com.sun.squawk.util.MathUtils;
 import edu.wpi.first.wpilibj.CANJaguar;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -25,8 +24,7 @@ public class NerdyPIDRobot{
 
     private double headingTolerance, distanceTolerance;
     private double error;
-    private double heading, gyroRate;
-    public double speedTraveling = 0;
+    private double heading;
     private double distanceTraveled = 0;
     private double KpAngular = 0.33333;
     private double KiAngular = 0.1;
@@ -35,18 +33,8 @@ public class NerdyPIDRobot{
     private double KpLinear = 1/3;
     private double KiLinear = 1/.45;
     private double KdLinear = 0.5;
-    private double joystickThreshold = 0.1;
     private double distanceRemaining = 0;
-    public boolean drive180Mode = false;
-    private double xAxisOffset=0, yAxisOffset=0;
-    //private double w = 0.2;
-    private double lastTime = 0;
-    public Gyro gyro;
-    public Joystick JoystickMain;
     public CANJaguar LtDriveMain, LtDriveSub1, LtDriveSub2, RtDriveMain, RtDriveSub1, RtDriveSub2;
-    public TrapezoidalIntegrator HeadingIntegrator, DistanceIntegrator, DistanceRemainingIntegrator, speedIntegrator;
-    private LowPassFilter LowPassFilterLeft, LowPassFilterRight;
-    public ADXL345_I2C accel;
             
     public NerdyPIDRobot(){
     
@@ -67,57 +55,12 @@ public class NerdyPIDRobot{
         }catch(Exception e){
             System.out.println(e);
         }
-        JoystickMain = new Joystick(2);
-        HeadingIntegrator = new TrapezoidalIntegrator(NerdyBot.k_PeriodTime, 100);
-        DistanceIntegrator = new TrapezoidalIntegrator(NerdyBot.k_PeriodTime,16);
-        DistanceRemainingIntegrator = new TrapezoidalIntegrator(NerdyBot.k_PeriodTime);
-        speedIntegrator = new TrapezoidalIntegrator(NerdyBot.k_PeriodTime, 4.5);
-        accel = new ADXL345_I2C(1, ADXL345_I2C.DataFormat_Range.k4G);
-        gyro = new Gyro(2);
-        init();
+        
         
         
 
     }
-    
-    public void init(){
-        
-        int calibrationStepsMax = 100;
-        double xAxisSum = 0;
-        double yAxisSum = 0;
-        for(int i = 0;i<calibrationStepsMax;i++){
-            xAxisSum += accel.getAcceleration(ADXL345_I2C.Axes.kX);
-            yAxisSum += accel.getAcceleration(ADXL345_I2C.Axes.kY);
-            Timer.delay(NerdyBot.k_PeriodTime);            
-        }
-        xAxisSum /= calibrationStepsMax;
-        yAxisSum /= calibrationStepsMax;
-        xAxisOffset = xAxisSum;
-        yAxisOffset = yAxisSum;
-        System.out.println(xAxisSum);
-        System.out.println(yAxisSum);
-    }
-    
-    public void setHeadingTolerance(double degree){
-    
-    /*
-    This sets a tolerance for the heading in degrees.
-    Heading is tolerable if is + or - tolerance.
-    Default is 0.
-    */
-    
-        headingTolerance = degree;
-    }
-    
-    public double getHeadingTolerance(){
-    
-    /*
-    Returns heading tolerance in degrees. 
-    If not set, this should return 0.
-    */
-    
-        return headingTolerance;
-    }
+
     
     public boolean isHeadingTolerable(double desiredAngle){
     
@@ -128,15 +71,6 @@ public class NerdyPIDRobot{
     
         double lastHeading = getHeading();
         return ((desiredAngle < lastHeading+headingTolerance) && (desiredAngle > lastHeading-headingTolerance));
-    }
-    
-    public double getHeading(){
-    
-    /*
-    Returns the last updated Heading.
-    */
-    
-        return heading;
     }
     
     public void setDistanceTolerance(double meter){
@@ -171,39 +105,6 @@ public class NerdyPIDRobot{
         return ((desiredDistance < distance_Traveled+distanceTolerance) && (desiredDistance > distance_Traveled-distanceTolerance));
     }
     
-    public double getDistanceTraveled(){
-    
-    /*
-    Returns the last updated distance traveled.
-    Must use calcDistanceTraveled() prior to get the most recent result.
-    */
-    
-        return distanceTraveled;
-    }
-    
-    public double calcDistanceTraveled(){
-        
-    /*
-    Calculates the distance traveled
-    */
-        
-        
-        double xAxis = accel.getAcceleration(ADXL345_I2C.Axes.kX) - xAxisOffset;
-        double yAxis = (accel.getAcceleration(ADXL345_I2C.Axes.kY) - yAxisOffset);
-        double zAxis = accel.getAcceleration(ADXL345_I2C.Axes.kZ);
-        double acceleration = (yAxis);
-        speedTraveling = speedIntegrator.updateAccumulation(acceleration);
-        distanceTraveled = DistanceIntegrator.updateAccumulation(speedTraveling);
-        SmartDashboard.putDouble("xAxis" , xAxis);
-        SmartDashboard.putDouble("yAxis" , yAxis);
-        SmartDashboard.putDouble("zAxis" , zAxis);
-        SmartDashboard.putDouble("acceleration" , acceleration);
-        SmartDashboard.putDouble("speedTraveling" , speedTraveling);
-        SmartDashboard.putDouble("distanceTraveled" , distanceTraveled*32);
-        
-        return distanceTraveled;
-    }
-    
     public double calcDistanceRemaining(double desiredDistance){
         
         calcDistanceTraveled();
@@ -216,55 +117,9 @@ public class NerdyPIDRobot{
         return distanceRemaining;
     }
     
-    public void resetDistance(){
-     
-    /*
-    Resets distance traveled to 0.   
-    */
-        
-        distanceTraveled = 0;
-    }
     
-    public double getRate(){
-        
-        return gyroRate;
-    }
+
     
-    public double get360JoystickAngle(){
-    
-    /*
-    Grabs an 360 degree angle reading from the joystick.
-    0 degrees is north. 90 degrees is west.
-    Should rewrite for arcade drive so that robot always faces forward.
-    Should subtract Joystick Bias.
-    */
-    
-        double y = -JoystickMain.getY();
-        double x = -JoystickMain.getX();
-            if (Math.abs(x) < joystickThreshold && Math.abs(y) < joystickThreshold ){
-                //need heading update code
-                return heading;
-                }
-            double angle = (MathUtils.atan2(y,x)) * 180 / Math.PI + 270;
-        if (drive180Mode){
-            if (angle >= 90 && angle <= 270){
-                angle += 180;//This makes sure that the robot always faces forward.
-                angle %= 180;
-            }
-        }
-        return angle%360;
-    }
-    
-    public void updateGyroValues(){
-    
-    /*
-    Updates and returns the heading.
-    Heading is not tilt compensated.
-    Dependent on a working gyro. 
-    */
-        heading = (-gyro.getAngle()+720) % 360;
-        gyroRate = gyro.getRate();
-    }
     
     private double calcShortestRotation(double desiredAngle){
     
@@ -422,13 +277,6 @@ public class NerdyPIDRobot{
         return number*number;
     }
     
-    public double testSin(double w){// W is radians per second
-        double A = 1; //Amplitude
-        double t = 0.050;
-        double testSin = A * Math.sin(w * t);
-        return testSin;
-    }
-    
     private double constrain (double value, double m_limit){
     if(value > m_limit){
     value = m_limit;
@@ -437,12 +285,5 @@ public class NerdyPIDRobot{
     }
     return value; 
     }
-    
-    public void reset(){
-        gyro.reset();
-        DistanceIntegrator.resetAccumulation();
-        speedIntegrator.resetAccumulation();
-        speedTraveling = 0;
-        init();
-    }
+   
 } 
