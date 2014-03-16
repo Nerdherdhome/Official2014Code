@@ -20,7 +20,7 @@ package NerdHerd;
     
 public class TrapezoidalIntegrator {
    
-    private double m_previousValue = 0, m_sampleTime, m_accumulation = 0, m_accumulationLimit = 1;
+    private double m_sampleTime, m_accumulation = 0, m_accumulationLimit = 2048;
     private double m_lastValue = 0;
             
      
@@ -76,7 +76,18 @@ public class TrapezoidalIntegrator {
         }
         m_lastValue = currentValue;
       return m_accumulation;
-        
+    }
+    
+    public double updateAccumulationDeltaY(double currentValue){
+      m_accumulation = m_accumulation + ((currentValue - m_lastValue)*m_sampleTime)/2;
+        if (m_accumulation > m_accumulationLimit){
+            m_accumulation = m_accumulationLimit; 
+        }
+        else if(m_accumulation < -m_accumulationLimit){
+            m_accumulation = -m_accumulationLimit;
+        }
+        m_lastValue = currentValue;
+      return m_accumulation;
     }
     
 }

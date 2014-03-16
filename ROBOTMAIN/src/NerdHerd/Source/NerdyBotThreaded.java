@@ -6,12 +6,11 @@ package NerdHerd.Source;
 
 import com.sun.squawk.GC;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Utility;
 import edu.wpi.first.wpilibj.communication.FRCControl;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import java.lang.Runnable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
@@ -158,8 +157,14 @@ public class NerdyBotThreaded extends RobotBase implements Runnable{
                 
             }
 
-            double sleepTime = k_PeriodTime-(getSeconds()-startTime);//seconds
-
+            double timePassed = getSeconds()-startTime;
+            double sleepTime = k_PeriodTime-(timePassed);//seconds
+            SmartDashboard.putDouble("TimePassedSensor", timePassed);
+            SmartDashboard.putDouble("SleepTimeSensor", sleepTime);
+            if(sleepTime < 0){
+                sleepTime = 0;
+            }
+            
             try{
                 Thread.sleep((long)(sleepTime*1000));//milliseconds
             }catch(Exception e){

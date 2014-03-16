@@ -127,6 +127,4 @@ public class NerdyAccel extends SensorBase {
         data.ZAxis = accelFromBytes(rawData[4], rawData[5]);
         return data;
     }
-    
-    // TODO: Support LiveWindow
 }
