@@ -32,27 +32,23 @@ public class ROBOTMAIN extends NerdyBotThreaded {
         Controller = new NerdyPIDController();
         Controller.setHeadingTolerance(3);//This is 3 degrees because it drifts 3 degrees / 2.5 minutes
         
-        camera = new NerdyCamera(AxisCamera.ResolutionT.k320x240);
-        camera.setPriority(6);
-        camera.start();
+        JoystickMain = new NerdyJoystick(1);
+        
+        //camera = new NerdyCamera(AxisCamera.ResolutionT.k320x240);
+        //camera.setPriority(6);
+        //camera.start();
         
     }
 
-    /**
-     * This function is called periodically during autonomous
-     */
     public void autonomousPeriodic() {
  
     }
 
-    /**
-     * This function is called periodically during operator control
-     */
     public void teleopPeriodic() {
 
         double angle = JoystickMain.get360JoystickAngle();
         double angularPower = Controller.getPIDOutputAngular(angle);
-        double linearPower = JoystickMain.getMagnitude();
+        double linearPower = -JoystickMain.getY();
         double twist = JoystickMain.getTwist();
         
         boolean twistTurnMode = JoystickMain.getRawButton(2);

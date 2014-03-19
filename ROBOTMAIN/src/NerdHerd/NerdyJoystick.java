@@ -19,13 +19,13 @@ public class NerdyJoystick extends Joystick {
     public Joystick JoystickMain;
     private final double joystickThreshold = 0.1;
     boolean drive180Mode = false;
-    private double joystickBiasY, joystickBiasX;
+    private double joystickBiasY = 0, joystickBiasX = 0;
     
     public NerdyJoystick(int port) {
         super(port);
         JoystickMain = new Joystick(port);
-        joystickBiasY = -JoystickMain.getY();
-        joystickBiasX = JoystickMain.getX();
+        //joystickBiasY = -JoystickMain.getY();
+        //joystickBiasX = JoystickMain.getX();
     }
      public double get360JoystickAngle(){
     
@@ -63,6 +63,14 @@ public class NerdyJoystick extends Joystick {
         magnitude = (magnitude/Math.sqrt(2) ) * -sign(JoystickMain.getY());
         return magnitude; 
      }
+    
+    public double getXLimited(){
+        return 0.0;
+    }
+    
+    public double getYLimited(){
+        return 0.0;
+    }
     
     private double sqr(double x){
         return x*x;

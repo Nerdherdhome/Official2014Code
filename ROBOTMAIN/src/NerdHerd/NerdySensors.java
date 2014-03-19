@@ -40,7 +40,7 @@ public class NerdySensors extends Thread{
     
     private void calibrate(){
         //Calibrate Gyro
-        gyro.setSensitivity(.0975);
+        gyro.setSensitivity(.125);
         //Calibrate Accel
         int calibrationStepsMax = 100;
         double xAxisSum = 0;
